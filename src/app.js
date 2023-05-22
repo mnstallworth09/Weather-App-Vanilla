@@ -21,6 +21,43 @@ function formatDate(timestamp) {
   return `${day} ${hours}:${minutes}`;
 }
 
+function displayForecast(response) {
+  console.log(response.data.daily);
+  let forecastElement = document.querySelector("#forecast");
+
+  let forecastHTML = `<div class="row">`;
+  let days = ["Thu", "Fri", "Sat", "Sun"];
+  days.forEach(function (day) {
+    forecastHTML =
+      forecastHTML +
+      `
+    <div class="col-2">
+      <div class="weather-forecast-date">${day}</div>
+      <img
+        src="https://openweathermap.org/img/wn/10d@2x.png"
+        alt="light rain"
+        width="60"
+      />
+      <div class="weather-forecast-temperatures">
+        <span class="weather-forecast-temperature-max">18°</span>
+        <span class="weather-forecast-temperature-min">12°</span>
+      </div>
+    </div>`;
+  });
+
+  forecastHTML = forecastHTML + `</div>`;
+  forecastElement.innerHTML = forecastHTML;
+  console.log(forecastHTML);
+}
+
+function getForecast(coordinates) {
+  console.log(coordinates);
+  let apiKey = "fbef01f4et1b02o0d25c27210a43ef3f";
+  let apiUrl = `https://api.shecodes.io/weather/v1/current?=lat={coordinates.lat}&lon={coordinates.lon}&appid=${apikey}&units=metric`;
+  console.log(apiUrl);
+  axios.get(apiUrl).then(displayForecast);
+}
+
 function displayTemperature(response) {
   console.log(response.data);
   let temperatureElement = document.querySelector("#temperature");
@@ -40,6 +77,8 @@ function displayTemperature(response) {
     `http://shecodes-assets.s3.amazonaws.com/api/weather/icons/$response.data.weather[0].icon.png`
   );
   iconElement.setAttribute("alt", response.data.weather[0].description);
+
+  getForecast(response.data.coord);
 }
 
 function search(city) {
