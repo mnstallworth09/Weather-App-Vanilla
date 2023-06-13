@@ -35,25 +35,24 @@ function displayForecast(response) {
 
   let forecastHTML = `<div class="row">`;
   forecast.forEach(function (forecastDay, index) {
+    console.log(forecastDay);
     if (index < 6) {
       forecastHTML =
         forecastHTML +
         `
     <div class="col-2">
-      <div class="weather-forecast-date">${formatDay(forecastDay.dt)}</div>
+      <div class="weather-forecast-date">${formatDay(forecastDay.time)}</div>
       <img
-        src="https://openweathermap.org/img/wn/${
-          forecastDay.weather[0].icon
-        }@2x.png"
+        src=${forecastDay.condition.icon_url}
         alt="light rain"
         width="60"
       />
       <div class="weather-forecast-temperatures">
         <span class="weather-forecast-temperature-max">${Math.round(
-          forecastDay.temp.max
+          forecastDay.temperature.maximum
         )}°</span>
         <span class="weather-forecast-temperature-min">${Math.round(
-          forecastDay.temp.min
+          forecastDay.temperature.minimum
         )}°</span>
       </div>
     </div>`;
@@ -68,7 +67,8 @@ function displayForecast(response) {
 function getForecast(coordinates) {
   console.log(coordinates);
   let apiKey = "bd79ao40tde3dec118ca46bc3e6dd55f";
-  let apiUrl = `https://api.shecodes.io/weather/v1/current?lon=${coordinates.longitude}&lat=${coordinates.latitude}&key=${apiKey}`;
+
+  let apiUrl = `https://api.shecodes.io/weather/v1/forecast?lon=${coordinates.longitude}&lat=${coordinates.latitude}&key=${apiKey}`;
   console.log(apiUrl);
   axios.get(apiUrl).then(displayForecast);
 }
@@ -99,7 +99,7 @@ function displayTemperature(response) {
 
 function search(city) {
   let apiKey = "bd79ao40tde3dec118ca46bc3e6dd55f";
-  let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=metric`;
+  let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=imperial`;
   axios.get(apiUrl).then(displayTemperature);
 }
 
@@ -107,6 +107,19 @@ function handleSubmit(event) {
   event.preventDefault();
   let cityInputElement = document.querySelector("#city-input");
   search(cityInputElement.value);
+}
+
+function displayFarenheitTemperature(event) {
+  event.preventDefault();
+  let temperatureElement = document.querySelector("#temperature");
+
+  celsiusLink.classList.remove("active");
+  fahrenheitLink.classList.add("active");
+  let fahrenheitTemperature = (celsiusTemperature * 9) / 5 + 32;
+  temperatureElement.innerHTML = Math.round(fahrenheitTemperature);
+
+  let fahrenheitLink = document.querySelector("#fahrenheit-link");
+  fahrenheitLink.addEventListener("click", displayFarenheitTemperature);
 }
 
 search("New York");
